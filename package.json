@@ -1,10 +1,14 @@
 {
   "name": "@suiz/tx-parse",
   "module": "index.ts",
+  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "test": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "publish:major": "npm version major && npm publish --access public",
+    "publish:minor": "npm version minor && npm publish --access public",
+    "publish:patch": "npm version patch && npm publish --access public"
   },
   "devDependencies": {
     "@lobehub/lint": "^1.25.7",
