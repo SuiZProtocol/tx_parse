@@ -17,6 +17,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@mysten/sui": "^1.21.2"
+    "@mysten/sui": "^1.21.2",
+    "@suiz/ai-commit": "^3.0.0"
   }
 }
