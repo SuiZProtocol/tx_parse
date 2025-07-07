@@ -22,9 +22,9 @@
     "prebuild": "npm run clean",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
-    "publish:major": "npm version major && npm publish --access public",
-    "publish:minor": "npm version minor && npm publish --access public",
-    "publish:patch": "npm version patch && npm publish --access public"
+    "publish:major": "npm version major",
+    "publish:minor": "npm version minor",
+    "publish:patch": "npm version patch"
   },
   "devDependencies": {
     "@lobehub/lint": "^1.25.7",

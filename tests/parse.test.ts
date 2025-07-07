@@ -1,9 +1,8 @@
 import { describe, it } from "vitest";
-
 import { TxParseClient } from "../src/client";
 import { getFullnodeUrl, SuiClient } from "@mysten/sui/client";
 
-describe("解析测试套件", () => {
+describe("Parse tx tests", () => {
   const suiClient = new SuiClient({ url: process.env.SUI_RPC_URL || getFullnodeUrl("mainnet") });
 
   const txParseClient = new TxParseClient(suiClient);
