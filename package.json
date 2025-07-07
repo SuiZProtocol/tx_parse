@@ -1,6 +1,6 @@
 {
   "name": "@suiz/tx-parse",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "main": "./dist/index.umd.cjs",
   "types": "./dist/index.d.ts",
