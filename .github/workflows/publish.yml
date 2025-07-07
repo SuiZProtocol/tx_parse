@@ -17,6 +17,7 @@ jobs:
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
+          always-auth: true
 
       - name: Install Bun
         uses: oven-sh/setup-bun@v1
@@ -33,11 +34,6 @@ jobs:
 
       - name: Build
         run: bun run build
-
-      - name: Configure npm
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
-          npm whoami
 
       - name: Publish to npm
         run: npm publish --access public
