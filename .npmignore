@@ -1,0 +1,55 @@
+# Source files
+src/
+*.ts
+!dist/**/*.d.ts
+
+# Test files
+tests/
+*.test.*
+*.spec.*
+vitest.config.ts
+coverage/
+
+# Development files
+.github/
+.git/
+.gitignore
+.npmignore
+bun.lockb
+package-lock.json
+tsconfig.json
+vite.config.ts
+
+# Documentation
+CLAUDE.md
+*.md
+!README.md
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Node modules (should already be excluded)
+node_modules/
+
+# Build tools config
+.eslintrc*
+.prettierrc*
+.editorconfig
+
+# Temporary files
+tmp/
+temp/
