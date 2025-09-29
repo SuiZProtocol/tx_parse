@@ -9,6 +9,7 @@ A polyglot SDK for parsing Sui blockchain transaction blocks. The repository now
 
 - Extract balance changes with normalized owner metadata (Address, Object, Shared, ConsensusV2, Immutable)
 - Return gas usage summaries straight from on-chain transaction effects
+- **Track dynamic field balance changes within Sui Bags** with automatic decimal handling
 - Identical parsing semantics for TypeScript and Rust implementations
 - Fixture-driven tests that avoid external RPC calls while protecting behaviour
 - Ready for integration in Node/Bun apps or async Rust backends
@@ -39,6 +40,8 @@ bun run test         # run vitest unit tests (fixture-backed)
 
 ### Usage
 
+#### Basic Transaction Parsing
+
 ```typescript
 import { TxParseClient } from '@suiz/tx-parse';
 import { SuiClient, getFullnodeUrl } from '@mysten/sui/client';
@@ -52,6 +55,23 @@ const result = await parser.parseTX('YOUR_TX_DIGEST');
 
 console.log(result.balanceChanges);
 console.log(result.gasCost);
+```
+
+#### Track Bag Dynamic Field Balance Changes
+
+```typescript
+const changes = await parser.getBagDynamicFieldBalanceChanges(
+  'YOUR_TX_DIGEST',
+  'YOUR_BAG_ID'
+);
+
+changes.forEach(change => {
+  console.log(`Coin: ${change.coinType}`);
+  console.log(`Previous: ${change.previousValue}`);
+  console.log(`Current: ${change.currentValue}`);
+  console.log(`Difference: ${change.valueDiff}`);
+  console.log(`Decimals: ${change.decimals}`);
+});
 ```
 
 You can also import the pure helper for offline processing:
@@ -75,6 +95,8 @@ tx_parse = { path = "../rust" }  # when working inside this monorepo
 
 ### Example
 
+#### Basic Transaction Parsing
+
 ```rust
 use tx_parse::TxParseClient;
 
@@ -85,6 +107,29 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("Owners: {:?}", parsed.balance_changes);
     println!("Gas: {:?}", parsed.gas_cost);
+    Ok(())
+}
+```
+
+#### Track Bag Dynamic Field Balance Changes
+
+```rust
+use tx_parse::TxParseClient;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let client = TxParseClient::new("https://fullnode.mainnet.sui.io:443");
+    let changes = client
+        .get_bag_dynamic_field_balance_changes("YOUR_TX_DIGEST", "YOUR_BAG_ID")
+        .await?;
+
+    for change in changes {
+        println!("Coin Type: {}", change.coin_type);
+        println!("Previous: {}", change.previous_value);
+        println!("Current: {}", change.current_value);
+        println!("Difference: {}", change.value_diff);
+        println!("Decimals: {}", change.decimals);
+    }
     Ok(())
 }
 ```
@@ -132,6 +177,7 @@ MIT
 
 - 解析余额变更并标准化所有者信息（Address、Object、Shared、ConsensusV2、Immutable）
 - 直接返回链上交易效果中的 Gas 消耗信息
+- **追踪 Sui Bag 中动态字段的余额变化**，自动处理精度（decimals）
 - TypeScript 与 Rust 实现共享一致的解析语义
 - 基于夹具的测试，无需访问外部 RPC，同时保障行为稳定
 - 适用于 Node/Bun 应用或异步 Rust 后端
@@ -162,6 +208,8 @@ bun run test         # 运行基于夹具的 Vitest 测试
 
 ### 使用示例
 
+#### 基础交易解析
+
 ```typescript
 import { TxParseClient } from '@suiz/tx-parse';
 import { SuiClient, getFullnodeUrl } from '@mysten/sui/client';
@@ -175,6 +223,23 @@ const result = await parser.parseTX('YOUR_TX_DIGEST');
 
 console.log(result.balanceChanges);
 console.log(result.gasCost);
+```
+
+#### 追踪 Bag 动态字段余额变化
+
+```typescript
+const changes = await parser.getBagDynamicFieldBalanceChanges(
+  'YOUR_TX_DIGEST',
+  'YOUR_BAG_ID'
+);
+
+changes.forEach(change => {
+  console.log(`币种: ${change.coinType}`);
+  console.log(`之前: ${change.previousValue}`);
+  console.log(`当前: ${change.currentValue}`);
+  console.log(`差值: ${change.valueDiff}`);
+  console.log(`精度: ${change.decimals}`);
+});
 ```
 
 离线解析时可以使用纯函数：
@@ -198,6 +263,8 @@ tx_parse = { path = "../rust" }  # 在此 monorepo 中引用
 
 ### 代码示例
 
+#### 基础交易解析
+
 ```rust
 use tx_parse::TxParseClient;
 
@@ -208,6 +275,29 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("Owners: {:?}", parsed.balance_changes);
     println!("Gas: {:?}", parsed.gas_cost);
+    Ok(())
+}
+```
+
+#### 追踪 Bag 动态字段余额变化
+
+```rust
+use tx_parse::TxParseClient;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let client = TxParseClient::new("https://fullnode.mainnet.sui.io:443");
+    let changes = client
+        .get_bag_dynamic_field_balance_changes("YOUR_TX_DIGEST", "YOUR_BAG_ID")
+        .await?;
+
+    for change in changes {
+        println!("币种类型: {}", change.coin_type);
+        println!("之前值: {}", change.previous_value);
+        println!("当前值: {}", change.current_value);
+        println!("差值: {}", change.value_diff);
+        println!("精度: {}", change.decimals);
+    }
     Ok(())
 }
 ```
