@@ -10,3 +10,11 @@ export interface ParseResult {
   balanceChanges: BalanceChange[];
   gasCost: GasCostSummary;
 }
+
+export interface DynamicFieldBalanceChange {
+  coinType: string;
+  previousValue: string;
+  currentValue: string;
+  valueDiff: string;
+  decimals: number;
+}

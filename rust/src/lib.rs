@@ -5,4 +5,4 @@ mod utils;
 
 pub use client::{ClientError, TxParseClient};
 pub use parse::{parse_transaction_value, ParseError};
-pub use types::{BalanceChange, GasCostSummary, ParseResult};
+pub use types::{BalanceChange, DynamicFieldBalanceChange, GasCostSummary, ParseResult};

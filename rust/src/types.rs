@@ -11,6 +11,16 @@ pub struct BalanceChange {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
+pub struct DynamicFieldBalanceChange {
+    pub coin_type: String,
+    pub previous_value: String,
+    pub current_value: String,
+    pub value_diff: String,
+    pub decimals: u8,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct GasCostSummary {
     pub computation_cost: String,
     pub storage_cost: String,
@@ -82,4 +92,63 @@ pub(crate) enum ObjectOwner {
         consensus_v2: ConsensusV2Owner,
     },
     Other(Value),
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub(crate) struct ObjectChangesResponse {
+    pub object_changes: Option<Vec<ObjectChange>>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(tag = "type", rename_all = "camelCase")]
+pub(crate) enum ObjectChange {
+    #[serde(rename_all = "camelCase")]
+    Created {
+        object_id: String,
+        version: String,
+        owner: Option<ObjectOwner>,
+    },
+    #[serde(rename_all = "camelCase")]
+    Mutated {
+        object_id: String,
+        version: String,
+        previous_version: String,
+        owner: Option<ObjectOwner>,
+    },
+    #[serde(rename_all = "camelCase")]
+    Deleted {
+        #[allow(dead_code)]
+        object_id: String,
+    },
+    #[serde(other)]
+    Other,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub(crate) struct PastObjectResponse {
+    pub status: String,
+    pub details: Option<ObjectDetails>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub(crate) struct ObjectDetails {
+    pub content: Option<ObjectContent>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub(crate) struct ObjectContent {
+    pub data_type: String,
+    #[serde(rename = "type")]
+    pub type_: Option<String>,
+    pub fields: Option<Value>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub(crate) struct CoinMetadata {
+    pub decimals: Option<u8>,
 }
