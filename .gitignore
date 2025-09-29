@@ -19,6 +19,8 @@ node_modules
 *.lock
 package-lock.json
 bun.lockb
+target
+rust/target
 
 # ci
 .coverage

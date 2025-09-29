@@ -1,0 +1,40 @@
+{
+  "digest": "8oCTESTTXDIGEST",
+  "timestampMs": "1700000000000",
+  "balanceChanges": [
+    {
+      "coinType": "0x2::sui::SUI",
+      "owner": { "AddressOwner": "0x6f4d3a" },
+      "amount": "1000"
+    },
+    {
+      "coinType": "0x2::other::COIN",
+      "owner": { "ObjectOwner": "0x123456" },
+      "amount": "-750"
+    },
+    {
+      "coinType": "0x2::shared::TOKEN",
+      "owner": { "Shared": { "initial_shared_version": "42", "mutable": true } },
+      "amount": "250"
+    },
+    {
+      "coinType": "0x2::consensus::TOKEN",
+      "owner": { "ConsensusV2": { "start_version": "77" } },
+      "amount": "0"
+    },
+    {
+      "coinType": "0x2::immutable::ART",
+      "owner": "Immutable",
+      "amount": "1"
+    }
+  ],
+  "effects": {
+    "gasUsed": {
+      "computationCost": "100",
+      "storageCost": "200",
+      "storageRebate": "50",
+      "nonRefundableStorageFee": "10"
+    }
+  },
+  "events": []
+}
