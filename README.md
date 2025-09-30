@@ -60,18 +60,53 @@ console.log(result.gasCost);
 #### Track Bag Dynamic Field Balance Changes
 
 ```typescript
+const txDigest = 'J5BzQREx52w3t75bFSZAy3uRpGne543vx251ZDf6LKmR';
+const bagId = '0x64ac48a57c8dfb3f69d5b0956be0c6727267978a11a53659c71f77c13c58aaad';
+
 const changes = await parser.getBagDynamicFieldBalanceChanges(
-  'YOUR_TX_DIGEST',
-  'YOUR_BAG_ID'
+  txDigest,
+  bagId
 );
 
-changes.forEach(change => {
-  console.log(`Coin: ${change.coinType}`);
-  console.log(`Previous: ${change.previousValue}`);
-  console.log(`Current: ${change.currentValue}`);
-  console.log(`Difference: ${change.valueDiff}`);
-  console.log(`Decimals: ${change.decimals}`);
+console.log(`Found ${changes.length} dynamic field balance changes:\n`);
+
+changes.forEach((change, index) => {
+  const prevFormatted = (Number(change.previousValue) / Math.pow(10, change.decimals)).toFixed(change.decimals);
+  const currFormatted = (Number(change.currentValue) / Math.pow(10, change.decimals)).toFixed(change.decimals);
+  const diffFormatted = (Number(change.valueDiff) / Math.pow(10, change.decimals)).toFixed(change.decimals);
+
+  console.log(`Change #${index + 1}:`);
+  console.log(`  Coin Type: ${change.coinType}`);
+  console.log(`  Decimals: ${change.decimals}`);
+  console.log(`  Previous Value: ${change.previousValue} (${prevFormatted})`);
+  console.log(`  Current Value: ${change.currentValue} (${currFormatted})`);
+  console.log(`  Difference: ${change.valueDiff} (${diffFormatted})`);
 });
+```
+
+**Raw Response Structure:**
+```typescript
+[
+  {
+    coinType: '0x2::sui::SUI',
+    previousValue: '4327309310157',
+    currentValue: '4327310680948',
+    valueDiff: '1370791',
+    decimals: 9
+  }
+]
+```
+
+**Console Output:**
+```
+Found 1 dynamic field balance changes:
+
+Change #1:
+  Coin Type: 0x2::sui::SUI
+  Decimals: 9
+  Previous Value: 4327309310157 (4327.309310157)
+  Current Value: 4327310680948 (4327.310680948)
+  Difference: 1370791 (0.001370791)
 ```
 
 You can also import the pure helper for offline processing:
@@ -119,19 +154,58 @@ use tx_parse::TxParseClient;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = TxParseClient::new("https://fullnode.mainnet.sui.io:443");
+
+    let tx_digest = "J5BzQREx52w3t75bFSZAy3uRpGne543vx251ZDf6LKmR";
+    let bag_id = "0x64ac48a57c8dfb3f69d5b0956be0c6727267978a11a53659c71f77c13c58aaad";
+
     let changes = client
-        .get_bag_dynamic_field_balance_changes("YOUR_TX_DIGEST", "YOUR_BAG_ID")
+        .get_bag_dynamic_field_balance_changes(tx_digest, bag_id)
         .await?;
 
-    for change in changes {
-        println!("Coin Type: {}", change.coin_type);
-        println!("Previous: {}", change.previous_value);
-        println!("Current: {}", change.current_value);
-        println!("Difference: {}", change.value_diff);
-        println!("Decimals: {}", change.decimals);
+    println!("Found {} dynamic field balance changes:\n", changes.len());
+
+    for (index, change) in changes.iter().enumerate() {
+        let prev_formatted = change.previous_value.parse::<f64>().unwrap_or(0.0)
+            / 10_f64.powi(change.decimals as i32);
+        let curr_formatted = change.current_value.parse::<f64>().unwrap_or(0.0)
+            / 10_f64.powi(change.decimals as i32);
+        let diff_formatted = change.value_diff.parse::<f64>().unwrap_or(0.0)
+            / 10_f64.powi(change.decimals as i32);
+
+        println!("Change #{}:", index + 1);
+        println!("  Coin Type: {}", change.coin_type);
+        println!("  Decimals: {}", change.decimals);
+        println!("  Previous Value: {} ({:.9})", change.previous_value, prev_formatted);
+        println!("  Current Value: {} ({:.9})", change.current_value, curr_formatted);
+        println!("  Difference: {} ({:.9})", change.value_diff, diff_formatted);
     }
     Ok(())
 }
+```
+
+**Raw Response Structure:**
+```rust
+vec![
+    BagDynamicFieldBalanceChange {
+        coin_type: "0x2::sui::SUI".to_string(),
+        previous_value: "4327309310157".to_string(),
+        current_value: "4327310680948".to_string(),
+        value_diff: "1370791".to_string(),
+        decimals: 9,
+    }
+]
+```
+
+**Console Output:**
+```
+Found 1 dynamic field balance changes:
+
+Change #1:
+  Coin Type: 0x2::sui::SUI
+  Decimals: 9
+  Previous Value: 4327309310157 (4327.309310157)
+  Current Value: 4327310680948 (4327.310680948)
+  Difference: 1370791 (0.001370791)
 ```
 
 Prefer offline parsing? Pass a `serde_json::Value` to `tx_parse::parse_transaction_value` and reuse the exact parsing logic without hitting an RPC endpoint.
@@ -228,18 +302,53 @@ console.log(result.gasCost);
 #### 追踪 Bag 动态字段余额变化
 
 ```typescript
+const txDigest = 'J5BzQREx52w3t75bFSZAy3uRpGne543vx251ZDf6LKmR';
+const bagId = '0x64ac48a57c8dfb3f69d5b0956be0c6727267978a11a53659c71f77c13c58aaad';
+
 const changes = await parser.getBagDynamicFieldBalanceChanges(
-  'YOUR_TX_DIGEST',
-  'YOUR_BAG_ID'
+  txDigest,
+  bagId
 );
 
-changes.forEach(change => {
-  console.log(`币种: ${change.coinType}`);
-  console.log(`之前: ${change.previousValue}`);
-  console.log(`当前: ${change.currentValue}`);
-  console.log(`差值: ${change.valueDiff}`);
-  console.log(`精度: ${change.decimals}`);
+console.log(`找到 ${changes.length} 个动态字段余额变化：\n`);
+
+changes.forEach((change, index) => {
+  const prevFormatted = (Number(change.previousValue) / Math.pow(10, change.decimals)).toFixed(change.decimals);
+  const currFormatted = (Number(change.currentValue) / Math.pow(10, change.decimals)).toFixed(change.decimals);
+  const diffFormatted = (Number(change.valueDiff) / Math.pow(10, change.decimals)).toFixed(change.decimals);
+
+  console.log(`变更 #${index + 1}:`);
+  console.log(`  币种类型: ${change.coinType}`);
+  console.log(`  精度: ${change.decimals}`);
+  console.log(`  之前值: ${change.previousValue} (${prevFormatted})`);
+  console.log(`  当前值: ${change.currentValue} (${currFormatted})`);
+  console.log(`  差值: ${change.valueDiff} (${diffFormatted})`);
 });
+```
+
+**原始响应结构：**
+```typescript
+[
+  {
+    coinType: '0x2::sui::SUI',
+    previousValue: '4327309310157',
+    currentValue: '4327310680948',
+    valueDiff: '1370791',
+    decimals: 9
+  }
+]
+```
+
+**控制台输出：**
+```
+找到 1 个动态字段余额变化：
+
+变更 #1:
+  币种类型: 0x2::sui::SUI
+  精度: 9
+  之前值: 4327309310157 (4327.309310157)
+  当前值: 4327310680948 (4327.310680948)
+  差值: 1370791 (0.001370791)
 ```
 
 离线解析时可以使用纯函数：
@@ -287,19 +396,58 @@ use tx_parse::TxParseClient;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = TxParseClient::new("https://fullnode.mainnet.sui.io:443");
+
+    let tx_digest = "J5BzQREx52w3t75bFSZAy3uRpGne543vx251ZDf6LKmR";
+    let bag_id = "0x64ac48a57c8dfb3f69d5b0956be0c6727267978a11a53659c71f77c13c58aaad";
+
     let changes = client
-        .get_bag_dynamic_field_balance_changes("YOUR_TX_DIGEST", "YOUR_BAG_ID")
+        .get_bag_dynamic_field_balance_changes(tx_digest, bag_id)
         .await?;
 
-    for change in changes {
-        println!("币种类型: {}", change.coin_type);
-        println!("之前值: {}", change.previous_value);
-        println!("当前值: {}", change.current_value);
-        println!("差值: {}", change.value_diff);
-        println!("精度: {}", change.decimals);
+    println!("找到 {} 个动态字段余额变化：\n", changes.len());
+
+    for (index, change) in changes.iter().enumerate() {
+        let prev_formatted = change.previous_value.parse::<f64>().unwrap_or(0.0)
+            / 10_f64.powi(change.decimals as i32);
+        let curr_formatted = change.current_value.parse::<f64>().unwrap_or(0.0)
+            / 10_f64.powi(change.decimals as i32);
+        let diff_formatted = change.value_diff.parse::<f64>().unwrap_or(0.0)
+            / 10_f64.powi(change.decimals as i32);
+
+        println!("变更 #{}:", index + 1);
+        println!("  币种类型: {}", change.coin_type);
+        println!("  精度: {}", change.decimals);
+        println!("  之前值: {} ({:.9})", change.previous_value, prev_formatted);
+        println!("  当前值: {} ({:.9})", change.current_value, curr_formatted);
+        println!("  差值: {} ({:.9})", change.value_diff, diff_formatted);
     }
     Ok(())
 }
+```
+
+**原始响应结构：**
+```rust
+vec![
+    BagDynamicFieldBalanceChange {
+        coin_type: "0x2::sui::SUI".to_string(),
+        previous_value: "4327309310157".to_string(),
+        current_value: "4327310680948".to_string(),
+        value_diff: "1370791".to_string(),
+        decimals: 9,
+    }
+]
+```
+
+**控制台输出：**
+```
+找到 1 个动态字段余额变化：
+
+变更 #1:
+  币种类型: 0x2::sui::SUI
+  精度: 9
+  之前值: 4327309310157 (4327.309310157)
+  当前值: 4327310680948 (4327.310680948)
+  差值: 1370791 (0.001370791)
 ```
 
 如需离线解析，可向 `tx_parse::parse_transaction_value` 传入 `serde_json::Value`，重用相同逻辑而无需访问 RPC。
