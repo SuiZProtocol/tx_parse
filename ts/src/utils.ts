@@ -23,7 +23,8 @@ export function getActualOwner(objectOwner?: ObjectOwner | null): string | null 
   }
 
   if ("ConsensusV2" in objectOwner) {
-    return `ConsensusV2-${objectOwner.ConsensusV2.start_version}`;
+    const consensus = objectOwner.ConsensusV2 as { start_version: number };
+    return `ConsensusV2-${consensus.start_version}`;
   }
 
   return null;

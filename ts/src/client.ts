@@ -50,7 +50,7 @@ export class TxParseClient {
 
       const objectId = objChange.objectId;
       const version = objChange.version;
-      const previousVersion = objChange.previousVersion;
+      const previousVersion = objChange.type === "mutated" ? objChange.previousVersion : undefined;
 
       try {
         // Get current version content

@@ -3,6 +3,7 @@ import { resolve } from 'path'
 import dts from 'vite-plugin-dts'
 
 export default defineConfig({
+  root: __dirname,
   build: {
     lib: {
       // 使用 resolve 确保路径正确
@@ -21,9 +22,10 @@ export default defineConfig({
     }
   },
   plugins: [
-    dts({ 
+    dts({
       insertTypesEntry: true,
-      rollupTypes: true
+      rollupTypes: false,
+      tsconfigPath: resolve(__dirname, './tsconfig.json')
     })
   ],
   test: {
